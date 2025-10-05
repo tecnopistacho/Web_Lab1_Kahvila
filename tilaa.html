@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <title>Kahvila Tilaukset - Tilaa</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <ul>
+            <li><a href="index.html">Etusivu</a></li>
+            <li><a href="menu.html">Menu</a></li>
+            <li><a href="tilaa.html">Tilaa</a></li>
+            <li><a href="galleria.html">Galleria</a>"</li>
+            <li><a href="yhteystiedot.html">Yhteystiedot</a></li>
+        </ul>
+    </nav>
+
+    <!-- Tilauslomake -->
+     <h1>Tilaa Ruoka</h1>
+     <form action="#" method="post">
+        <label for="nimi">Nimi:</label><br>
+        <input type="text" id="nimi" name="nimi" required><br><br>
+
+        <label for="email">Sähköposti</label><br>
+        <input type="email" id="email" name="email" required><br><br>
+
+        <label for="tuote">Valitse Tuote:</label><br>
+        <select id="tuote" name="tuote" required>
+            <option value="paella">Paella</option>
+            <option value="gazpacho">Gazpacho</option>
+            <option value="fideua">Fideua</option>
+            <option value="pan_de_calatrava">Pan de Calatrava</option>
+            <option value="tarta_de_la_abuela">Tarta De La Abuela</option>
+            <option value="sangria">Sangria</option>
+            <option value="coronita">Coronita</option>
+            <option value="valkoviini">Valkoviini</option>
+            <option value="cafe_bombon">Cafe Bombon</option>
+            <option value="cortado">Cortado</option>
+        </select><br><br>
+
+        <label for="maara">Määrä:</label><br>
+        <input type="number" id="maara" name="maara" min="1" required><br><br>
+
+        <label for="lisatiedot">Lisätiedot:</label><br>
+        <textarea id="lisatiedot" name="lisatiedot" rows="4" cols="50" placeholder="Erityistoiveet, allergiat jne."></textarea><br><br>
+        
+        <button type="submit">Lähetä Tilaus</button>
+    </form>
+</body>
+</html>
+
+
+
