@@ -1,0 +1,103 @@
+:root {
+    --color-text: #1f2937;
+    --color-accent: #b45309;
+    /* kahvin sävy */
+    --space: 1rem;
+}
+
+html {
+    font-size: 16px;
+}
+
+body {
+    font-family: system-ui, sans-serif;
+    line-height: 1.5;
+    color: var(--color-text);
+    margin: 0;
+}
+
+/* Navigation */
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 1rem;
+    background: #eee;
+}
+
+nav a {
+    text-decoration: none;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+/* Typography */
+h1,
+h2,
+h3 {
+    line-height: 1.2;
+    margin: 0 0 calc(var(--space) * .75);
+}
+
+p,
+ul,
+ol,
+table {
+    margin: 0 0 var(--space);
+}
+
+/* Links */
+a {
+    text-decoration: underline;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+:focus {
+    outline: 3px solid var(--color-accent);
+    outline-offset: 2px;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 800px;
+}
+
+th,
+td {
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+}
+
+caption {
+    text-align: left;
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+}
+
+.container {
+    max-width: 65ch;
+    margin: 0 auto;
+    padding: var(--space);
+}
+
+.box {
+    margin: var(--space);
+    padding: calc(var(--space) * .75);
+    border: 2px solid #e5e7eb;
+    background: #f8fafc;
+}
+
+.title {
+    color: #333;
+}
+
+.title.strong {
+    color: var(--color-accent);
+}
