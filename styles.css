@@ -166,3 +166,20 @@ caption {
     object-fit: cover;
     border-radius: 0.25rem;
 }
+
+/* Osa C - Korosta kortti - highlight effect (vk4) */
+.highlight {
+    border: 2px solid var(--color-accent);
+    background-color: #fff7ed;
+}
+
+/* Osa D - Messages Styling (vk4) */
+.alert {
+    color: red;
+    font-weight: bold;
+}
+
+.success {
+    color: green;
+    font-weight: bold;
+}
