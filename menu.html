@@ -22,6 +22,22 @@
     <div class="container">
         <!-- Menu - taulukko-->
         <h1>Menu</h1>
+        <!--Vk 5 - Tehtävä 2 - Haku ja Korostus -->
+        <label for="search">Hae tuotteita:</label>
+        <input type="text" id="search" placeholder="Esim. paella tai sangria">
+        <!-- Vk 5 - Tehtävä 3 - CSV-tyylinen lisäys -->
+        <h3>Lisää uusi tuote</h3>
+        <input type="text" id="csvInput" placeholder="nimi;hinta;kategoria">
+        <button id="lisaaTuote">Lisää tuote</button>
+        <p id="csvMsg"></p>
+        <!-- Vk 5 - Tehtävä 5 - Järjestäminen -->
+        <h3>Järjestä tuotteet</h3>
+        <select id="sortSelect">
+            <option value="none">Ei järjestystä</option>
+            <option value="nimi">Nimi (A-Ö)</option>
+            <option value="hinta">Hinta (nouseva)</option>
+        </select>
+        <ul id="menuList"></ul> <!-- Vk 5 - Tehtävä 1 - Listan renderöinti -->
         <table>
             <caption>Tuotteet ja tiedot</caption>
             <thead>
@@ -95,6 +111,16 @@
                 </tr>
             </tbody>
         </table>
+        <!-- Vk 5 - Tehtävä 4 - Ostoskori -->
+        <h3>Ostoskori</h3>
+        <ul id="cartList"></ul>
+        <p id="cartTotal"></p>
+        <!-- Vk 5 - Tehtävä 6 - Raportti -->
+        <h3>Raportti</h3>
+        <button id="luoRaportti">Luo raportti</button>
+        <pre id="raporttiTeksti"></pre>
+        <!-- Vk 5 - Tehtävä 7 - Tallennus -->
+        <button id="tallennaRaportti">Tallenna raportti</button>
     </div>
 <script src="assets/js/script.js" defer></script>
 </body>

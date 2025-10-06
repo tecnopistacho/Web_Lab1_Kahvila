@@ -81,3 +81,190 @@ if (form) {
         }
     });
 }
+
+// Vk 5
+// Tehtävä 1 - Listan renderöinti (forEach/map/join)
+const MENU = [
+    { nimi: 'Paella', hinta: 15.90, kategoria: 'Pääuoka' },
+    { nimi: 'Gazpacho', hinta: 8.50, kategoria: 'Pääuoka' },
+    { nimi: 'Fideua', hinta: 14.90, kategoria: 'Pääuoka' },
+    { nimi: 'Pan de Calatrava', hinta: 6.50, kategoria: 'Jälkiruoka' },
+    { nimi: 'Tarta de la Abuela', hinta: 6.90, kategoria: 'Jälkiruoka' },
+    { nimi: 'Sangria', hinta: 5.00, kategoria: 'Juoma' },
+    { nimi: 'Coronita', hinta: 4.50, kategoria: 'Juoma' },
+    { nimi: 'Valkoviini', hinta: 5.50, kategoria: 'Juoma' },
+    { nimi: 'Cafe Bombon', hinta: 3.00, kategoria: 'Juoma' },
+    { nimi: 'Cortado', hinta: 2.50, kategoria: 'Juoma' }
+];
+
+let ostokori = []; // { nimi:string, hinta:number, kpl:number }
+
+function renderMenu(data, haku = '') {
+    const ul = document.getElementById('menuList');
+    if (!ul) return;
+
+    const items = data.map(item => {
+        let nimi = item.nimi;
+        if (haku) {
+            const re = new RegExp(haku, 'i');
+            nimi = nimi.replace(re, match => `<mark>${match}</mark>`);
+        }
+
+        // Tehtävä 4 - Ostoskori (Vk5)
+        return `
+        <li>
+        ${nimi} - ${item.hinta.toFixed(2)} € (${item.kategoria})
+        <button class="addToCart" data-nimi="${item.nimi}">Lisää koriin</button> 
+        </li>`;
+}).join('');
+
+    ul.innerHTML = items;
+    console.log(`renderMenu(): ${data.length} tuotteita`);
+}
+
+renderMenu(MENU);
+
+// Tehtävä 4 - Ostoskori
+document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('addToCart')) {
+        const nimi = e.target.dataset.nimi;
+        const tuote = MENU.find(t => t.nimi == nimi);
+        if (!tuote) return;
+
+        const rivit = ostokori.filter(t => t.nimi == nimi);
+        if(rivit.length) {
+            rivit[0].kpl += 1;
+        }
+        else {
+            ostokori.push({ nimi: tuote.nimi, hinta: tuote.hinta, kpl: 1});
+        }
+
+        renderCart();
+    }
+});
+
+// Tehtävä 2: Haku ja Korostus
+const searchField = document.getElementById('search');
+if(searchField) {
+    searchField.addEventListener('input', () => {
+        const haku = searchField.value.trim().toLowerCase();
+
+        const suodatettu = MENU.filter(item =>
+            item.nimi.toLowerCase().includes(haku)
+        );
+
+        renderMenu(suodatettu, haku);
+    });
+}
+
+// Tehtävä 5 - Järjestäminen
+const sortSelect = document.getElementById('sortSelect');
+if (sortSelect) {
+    sortSelect.addEventListener('change', () => {
+        const haku = searchField?.value.trim().toLowerCase() || '';
+        let data = MENU.filter(item => 
+            item.nimi.toLowerCase().includes(haku)
+        );
+
+        const valinta = sortSelect.value;
+        if (valinta == 'nimi') {
+            data = [...data].sort((a, b) => a.nimi.localeCompare(b.nimi, 'fi'));
+        }
+        else if (valinta == 'hinta') {
+            data = [...data].sort((a, b) => a.hinta - b.hinta);
+        }
+        renderMenu(data, haku);
+    });
+}
+
+// Tehtävä 3: CSV-tyylinen lisäys
+const csvInput = document.getElementById('csvInput');
+const csvBtn = document.getElementById('lisaaTuote');
+const csvMsg = document.getElementById('csvMsg');
+
+if (csvInput && csvBtn && csvMsg) {
+    csvBtn.addEventListener('click', () => {
+        const raw = csvInput.value.trim();
+        const parts = raw.split(';').map(p => p.trim());
+
+        if (parts.length != 3) {
+            csvMsg.textContent = 'Virhe: Anna tiedot muodossa "nimi;hinta;kategoria".';
+            csvMsg.className = 'alert';
+            return;
+        }
+
+        let [nimi, hintaStr, kategoria] = parts;
+        hintaStr = hintaStr.replace(',', '.');
+        const hinta = parseFloat(hintaStr);
+
+        // Validointi
+        if (nimi.length < 2 || isNaN(hinta) || hinta <= 0 || !kategoria) {
+            csvMsg.textContent = 'Virhe: Tarkista että nimi on vähintään 2 merkkiä, hinta > 0 ja kategoria ei tyhjä.';
+            csvMsg.className = 'alert';
+            return;
+        }
+
+        // Lisää uusi tuote
+        MENU.push({ nimi, hinta, kategoria });
+        renderMenu(MENU);
+        csvMsg.textContent = 'Tuote lisätty onnistuneesti';
+        csvMsg.className = 'success';
+        csvInput.value = '';
+    });
+}
+
+// Tehtävä 4 - Ostoskori
+function renderCart() {
+    const ul = document.getElementById('cartList');
+    const totalEl = document.getElementById('cartTotal');
+    if (!ul || !totalEl) return;
+
+    const items = ostokori.map(item =>
+        `<li>${item.nimi} (${item.kpl} kpl) - ${(item.hinta * item.kpl).toFixed(2)} €</li>`
+    ).join('');
+
+    const total = ostokori.reduce((sum, item) => sum + item.hinta * item.kpl, 0);
+
+    ul.innerHTML = items;
+    totalEl.textContent = `Yhteensä: ${total.toFixed(2)} €`;
+}
+
+// Tehtävä 6 - Raportti
+const raporttiBtn = document.getElementById('luoRaportti');
+const raporttiEl = document.getElementById('raporttiTeksti');
+
+if (raporttiBtn && raporttiEl) {
+    raporttiBtn.addEventListener('click', () => {
+        const rivit = MENU.map(item =>
+            `${item.nimi} (${item.kategoria}) - ${item.hinta.toFixed(2)} €`
+        );
+
+        const teksti = rivit.join('\n');
+        raporttiEl.textContent = teksti;
+        console.log('Raportti luotu');
+    });
+}
+
+// Tehtävä 7 - Tallennus
+const tallennaBtn = document.getElementById('tallennaRaportti');
+
+if (tallennaBtn && raporttiEl) {
+    tallennaBtn.addEventListener('click', () => {
+        const teksti = raporttiEl.textContent;
+        if (!teksti) return;
+
+        const blob = new Blob([teksti], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+
+        const linkki = document.createElement('a');
+        linkki.href = url;
+        linkki.download = 'menu-raportti.txt';
+        document.body.appendChild(linkki);
+        linkki.click();
+        document.body.removeChild(linkki);
+        URL.revokeObjectURL(url);
+
+        console.log('Raportti tallennettu');
+    });
+}
+

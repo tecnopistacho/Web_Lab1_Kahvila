@@ -1,24 +1,26 @@
-KahvilaTilaukset – Labramoniste
-Rakennetaan sivusto, joka toimii kahvilan tilauspalveluna. Sivustolla on menu, tilauslomake,
-galleria ja yhteystiedot.
-Sivut:
-• index.html – Etusivu: päivän erikoiset (lista)
-• menu.html – Taulukko tuotteista (Tuote, Kategoria, Hinta, Allergeenit)
-• tilaa.html – Tilauslomake (nimi, email, tuotteiden valinta, lisätiedot)
-• galleria.html – Tuotekuvat (alt-tekstit)
-• yhteystiedot.html – Sijainti ja aukioloajat (lista), linkki karttapalveluun
-Suositeltu tiedostorakenne:
-projekti/ index.html menu.html tilaa.html galleria.html yhteystiedot.html images/ tuote1.jpg ...
-style.css
-CSS-koodi navigaatiolle ja taulukolle (style.css):
-nav ul { list-style: none; padding: 0; margin: 0; display: flex; gap: 1rem; background: #eee; } nav a {
-text-decoration: none; } nav a:hover { text-decoration: underline; } table { border-collapse: collapse;
-width: 100%; max-width: 800px; } th, td { border: 1px solid #ccc; padding: 0.5rem; } caption {
-text-align: left; font-weight: bold; margin-bottom: 0.25rem; }
-Laadunvarmistus:
-• Etusivulla on päivän erikoiset listattuna ul/ol -listalla.
-• Menun taulukossa on caption ja vähintään 4 tuotetta riveinä.
-• Tilauslomakkeessa on vähintään: text, email, radio/select ja textarea.
-• Galleriasivulla on vähintään 2 kuvaa alt-teksteillä.
-• Yhteystiedot-sivulla lista aukioloajoista ja ulkoinen linkki karttapalveluun.
-• Navigaatio toimii kaikilla sivuilla
+# ☕ Kahvila Tilaukset - Viikko 5
+
+Tässä projektissa toteutin interaktiivisen kahvilasivun JavaScriptin avulla.
+
+## 1. 📒 Dynaaminen Menu
+- Käytin `map()` ja `join()` rakenteita ruokalistan renderöintiin.
+- Jokaiselle tuotteelle lisätään "Lisä koriin" -painike.
+
+## 2. 🔍 Haku ja Korostus
+- Hakukenttä suodattaa tuotteita `include()` -menetelmällä.
+- Hakusana korostetaan `RegExp`-pohjaisella `<mark>`-elementillä.
+
+## 3. ➕ CSV-tyylinen Tuotelisäys 
+- Käyttäjä voi lisätä tuotteita muodossa `nimi;hinta;kategoria`.
+- Syöte validoidaan ennen lisäystä.
+
+## 4. 🛒 Ostoskori
+- Ostoskori näyttää tuotteiden määrän ja kokonaishinnan.
+
+## 5. 💾 Raportti ja Tallennus
+- Raportti generoidaan `map()` ja `join()` avulla.
+- Käyttäjä voi tallentaa `.txt`-tiedostona `Blob`-objektin avulla.
+
+## 💾 Kuvakaappaus
+![Kuvakaappaus käyttöliittymästä](screenshot.png)
+
