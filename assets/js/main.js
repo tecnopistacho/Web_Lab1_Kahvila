@@ -1,3 +1,13 @@
+// Vk 6 - import all classes
+import { Drink } from './models/Drink.js';
+import { Food } from './models/Food.js';
+import { Order } from './models/Order.js';
+import { MenuService } from './services/MenuService.js';
+import { Currency } from './utils/Currency.js';
+import { ValidationError } from './utils/Errors.js';
+
+
+
 // Osa A - Lämmittely - muuttujat ja funktio
 console.log('Hei, JavaScript on nyt käytössä.'); // Tervehdys
 
@@ -84,7 +94,7 @@ if (form) {
 
 // Vk 5
 // Tehtävä 1 - Listan renderöinti (forEach/map/join)
-const MENU = [
+/* const MENU = [
     { nimi: 'Paella', hinta: 15.90, kategoria: 'Pääuoka' },
     { nimi: 'Gazpacho', hinta: 8.50, kategoria: 'Pääuoka' },
     { nimi: 'Fideua', hinta: 14.90, kategoria: 'Pääuoka' },
@@ -95,11 +105,90 @@ const MENU = [
     { nimi: 'Valkoviini', hinta: 5.50, kategoria: 'Juoma' },
     { nimi: 'Cafe Bombon', hinta: 3.00, kategoria: 'Juoma' },
     { nimi: 'Cortado', hinta: 2.50, kategoria: 'Juoma' }
+]; */
+
+// Vk 6 Menu array -> Objects with Drink and Food instances
+const initialMenu = [
+    new Food('Paella', 15.90, 'Pääruoka', false),
+    new Food('Gazpacho', 8.50, 'Pääuoka', false),
+    new Food('Fideua', 14.90, 'Pääuoka', false),
+    new Food('Pan de Calatrava', 6.50, 'Jälkiruoka', true),
+    new Food('Tarta de la Abuela', 6.90, 'Jälkiruoka', true),
+    new Drink('Sangria', 5.00, 'Juoma', 250),
+    new Drink('Coronita', 4.50, 'Juoma',330),
+    new Drink('Valkoviini', 5.50, 'Juoma', 150),
+    new Drink('Cafe Bombon', 3.00, 'Juoma', 100),
+    new Drink('Cortado', 2.50, 'Juoma', 100)
 ];
 
-let ostokori = []; // { nimi:string, hinta:number, kpl:number }
+const menuService = new MenuService(initialMenu);
+const order = new Order();
 
 function renderMenu(data, haku = '') {
+    const ul = document.getElementById('menuList');
+    if (!ul) return;
+
+    const items = data.map(item => {
+        let nimi = item.nimi;
+        if (haku) {
+            const re = new RegExp(haku, 'i');
+            nimi = nimi.replace(re, match => `<mark>${match}</mark>`);
+        }
+
+        return `
+            <li>
+                ${nimi} - ${Currency.formatEUR(item.hinta)} (${item.kategoria})
+                <button class="addToCart" data-id="${item.id}">Lisää koriin</button>
+            </li>`;
+    }).join('');
+
+    ul.innerHTML = items;
+}
+
+document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('addToCart')) {
+        const id = parseInt(e.target.dataset.id);
+        const item = menuService.list().find(i => i.id == id);
+        if (!item) return;
+
+        order.add(item);
+        renderCart();
+    }
+});
+
+function renderCart() {
+    const ul = document.getElementById('cartList');
+    const totalEl = document.getElementById('cartTotal');
+    if (!ul || !totalEl) return;
+
+    const items = order.toReportLines().split('\n').map(line => `<li>${line}</li>`).join('');
+    ul.innerHTML = items;
+    totalEl.textContent = `Yhteensä: ${Currency.formatEUR(order.total)}`;
+}
+
+/* csvBtn.addEventListener('click', () => {
+    try {
+        const raw = csvInput.value.trim();
+        const item = menuService.addFromCsv(raw);
+        renderMenu(menuService.list());
+        csvMsg.textContent = `Tuote "${item.nimi}" lisätty onnistuneesti`;
+        csvMsg.className = 'success';
+        csvInput.value = '';
+    }
+    catch (err) {
+        if (err instanceof ValidationError) {
+            csvMsg.textContent = `Virhe (${err.field}): ${err.message}`;
+            csvMsg.className = 'alert';
+        }
+        else {
+            console.error(err);
+        }
+    }
+}); */
+
+ // let ostokori = []; // { nimi:string, hinta:number, kpl:number }
+
+/* function renderMenu(data, haku = '') {
     const ul = document.getElementById('menuList');
     if (!ul) return;
 
@@ -120,12 +209,12 @@ function renderMenu(data, haku = '') {
 
     ul.innerHTML = items;
     console.log(`renderMenu(): ${data.length} tuotteita`);
-}
+} 
 
-renderMenu(MENU);
+renderMenu(MENU); */
 
 // Tehtävä 4 - Ostoskori
-document.addEventListener('click', (e) => {
+/* document.addEventListener('click', (e) => {
     if (e.target.classList.contains('addToCart')) {
         const nimi = e.target.dataset.nimi;
         const tuote = MENU.find(t => t.nimi == nimi);
@@ -141,7 +230,7 @@ document.addEventListener('click', (e) => {
 
         renderCart();
     }
-});
+}); */
 
 // Tehtävä 2: Haku ja Korostus
 const searchField = document.getElementById('search');
@@ -149,10 +238,7 @@ if(searchField) {
     searchField.addEventListener('input', () => {
         const haku = searchField.value.trim().toLowerCase();
 
-        const suodatettu = MENU.filter(item =>
-            item.nimi.toLowerCase().includes(haku)
-        );
-
+        const suodatettu = menuService.search(haku);
         renderMenu(suodatettu, haku);
     });
 }
@@ -162,16 +248,13 @@ const sortSelect = document.getElementById('sortSelect');
 if (sortSelect) {
     sortSelect.addEventListener('change', () => {
         const haku = searchField?.value.trim().toLowerCase() || '';
-        let data = MENU.filter(item => 
-            item.nimi.toLowerCase().includes(haku)
-        );
+        let data = menuService.search(haku);
 
         const valinta = sortSelect.value;
-        if (valinta == 'nimi') {
-            data = [...data].sort((a, b) => a.nimi.localeCompare(b.nimi, 'fi'));
-        }
-        else if (valinta == 'hinta') {
-            data = [...data].sort((a, b) => a.hinta - b.hinta);
+        if (valinta == 'nimi' || valinta == 'hinta') {
+            data = menuService.sortBy(valinta).filter(item =>
+                item.nimi.toLowerCase().includes(haku)
+            );
         }
         renderMenu(data, haku);
     });
@@ -184,36 +267,29 @@ const csvMsg = document.getElementById('csvMsg');
 
 if (csvInput && csvBtn && csvMsg) {
     csvBtn.addEventListener('click', () => {
-        const raw = csvInput.value.trim();
-        const parts = raw.split(';').map(p => p.trim());
-
-        if (parts.length != 3) {
-            csvMsg.textContent = 'Virhe: Anna tiedot muodossa "nimi;hinta;kategoria".';
-            csvMsg.className = 'alert';
-            return;
-        }
-
-        let [nimi, hintaStr, kategoria] = parts;
-        hintaStr = hintaStr.replace(',', '.');
-        const hinta = parseFloat(hintaStr);
-
-        // Validointi
-        if (nimi.length < 2 || isNaN(hinta) || hinta <= 0 || !kategoria) {
-            csvMsg.textContent = 'Virhe: Tarkista että nimi on vähintään 2 merkkiä, hinta > 0 ja kategoria ei tyhjä.';
-            csvMsg.className = 'alert';
-            return;
-        }
-
         // Lisää uusi tuote
-        MENU.push({ nimi, hinta, kategoria });
-        renderMenu(MENU);
-        csvMsg.textContent = 'Tuote lisätty onnistuneesti';
-        csvMsg.className = 'success';
-        csvInput.value = '';
+        try {
+            const raw = csvInput.value.trim();
+            const item = menuService.addFromCsv(raw);
+            renderMenu(menuService.list());
+            csvMsg.textContent = `Tuote "${item.nimi}" lisätty onnistuneesti`;
+            csvMsg.className = 'success';
+            csvInput.value = '';
+        } 
+        catch (err) {
+            if (err instanceof ValidationError) {
+                csvMsg.textContent = `Virhe (${err.field}): ${err.message}`;
+                csvMsg.className = 'alert';
+            } 
+            else {
+                console.error(err);
+            }
+        }
     });
 }
 
 // Tehtävä 4 - Ostoskori
+/*
 function renderCart() {
     const ul = document.getElementById('cartList');
     const totalEl = document.getElementById('cartTotal');
@@ -227,7 +303,7 @@ function renderCart() {
 
     ul.innerHTML = items;
     totalEl.textContent = `Yhteensä: ${total.toFixed(2)} €`;
-}
+} */
 
 // Tehtävä 6 - Raportti
 const raporttiBtn = document.getElementById('luoRaportti');
@@ -235,8 +311,8 @@ const raporttiEl = document.getElementById('raporttiTeksti');
 
 if (raporttiBtn && raporttiEl) {
     raporttiBtn.addEventListener('click', () => {
-        const rivit = MENU.map(item =>
-            `${item.nimi} (${item.kategoria}) - ${item.hinta.toFixed(2)} €`
+        const rivit = menuService.list().map(item =>
+            `${item.nimi} (${item.kategoria}) - ${Currency.formatEUR(item.hinta)}`
         );
 
         const teksti = rivit.join('\n');
